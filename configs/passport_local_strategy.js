@@ -1,6 +1,7 @@
 //Modules
 const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
+const bcrypt = require("bcrypt")
 
 //Model
 const User= require('../models/user')
@@ -12,13 +13,14 @@ passport.use(new LocalStrategy({
     usernameField : 'email',
     passReqToCallback: true,
 },(req,email,password,done)=> {
-    User.findOne({email: email}, (err, user) => {
+    User.findOne({email: email},async (err, user) => {
         if (err) {
             req.flash('error','Error in Finding User')
             console.log("Error in Finding User --> Passport")
             return done(err)
         }
-        if (!user || user.password !== password) {
+        let result = await bcrypt.compare(password, user.password)
+        if (!user || ! result) {
             req.flash('error','Invalid Username/Password')
             console.log("Invalid Username/Password")
             return done(null, false)

@@ -2,6 +2,7 @@
 const passport = require('passport')
 const googleStrategy = require('passport-google-oauth').OAuth2Strategy
 const crypto = require('crypto')
+const bcrypt = require("bcrypt")
 
 //Modles
 const User = require('../models/user')
@@ -20,6 +21,8 @@ passport.use(new googleStrategy({
         }
         // console.log(profile)
         if(user){
+            user.isEmailVerified = true
+            user.save()
             return done(null,user)
         }
         else{

@@ -1,6 +1,6 @@
 //Modules
 const crypto = require('crypto')
-
+const bcrypt = require('bcrypt')
 const auth_mailer = require('../mailer/auth_mailer')
 //Models
 
@@ -66,6 +66,9 @@ exports.createUser = async (req,res,next) =>{
         try {
             let user = await User.findOne({email: formData.email})
             if (!user) {
+                const simplePassword = formData.password
+                let new_password = await bcrypt.hash(simplePassword, 10)
+                formData.password = new_password
                 user = await User.create(formData)
                 let request = await Request.create({user:user.id})
                 auth_mailer.emailVerificationMail(user,request.id)
@@ -141,7 +144,7 @@ exports.generatePassword = async (req,res,next) =>{
     const email = req.body.email
     const user = await User.findOne({email:email})
     const newPassword = crypto.randomBytes(3).toString('hex')
-    user.password = newPassword
+    user.password = await bcrypt.hash(newPassword, 10);
     user.isPasswordUserCreated = false
     user.save()
     auth_mailer.forgetPasswordMail(user,newPassword)
@@ -150,14 +153,14 @@ exports.generatePassword = async (req,res,next) =>{
 }
 
 
-exports.createPassword=(req,res,next)=>{
+exports.createPassword=async (req,res,next)=>{
     const formData =req.body
     if(formData.password!==formData.confirm_password){
         req.flash('error',"Passwords doesn't match with each other" )
         return res.redirect("/")
     }
     else{
-        req.user.password = formData.password
+        req.user.password = await bcrypt.hash(formData.password, 10)
         req.user.isPasswordUserCreated = true
         req.user.save()
         return res.redirect('/')
