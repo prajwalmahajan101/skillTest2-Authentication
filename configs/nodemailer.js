@@ -9,7 +9,7 @@ let transporter = nodemailer.createTransport({
     port: 465,
     secure: true,
     auth :{
-        user: process.env.mailacc ||'noReply.authenticator.skillTest@gmail.com',
+        user: process.env.mailacc,
         pass: process.env.pass
     }
 })
