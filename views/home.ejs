@@ -1,0 +1,17 @@
+<link rel="stylesheet" href="/css/home.css">
+<h1>Hello World From Codeial</h1>
+<div class="container-fluid">
+    <div class="row justify-content-around">
+        <div class="col-10 bg-secondary p-3 justify-content-center">
+            <!-- Post Creation Form -->
+            <% for (user_k of users) {%>
+                <div class="col-10 text-danger p-3 m-3  <%= user_k.id===locals.user['id']?'bg-success':'bg-dark'%>" >
+                    <a class="text-decoration-none text-danger fw-bolder fs-3" href="/users/profile/<%= user_k.id%>">
+                        <%= user_k.name%>
+                    </a>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+
