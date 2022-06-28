@@ -38,7 +38,8 @@ exports.signUp = (req,res,next)=>{
         return res.redirect("/")
     }
     res.render('user_sign_up',{
-        title:"Sign Up"
+        title:"Sign Up",
+        key:process.env.siteKey
     })
 
 }
@@ -49,7 +50,8 @@ exports.signIn = (req,res,next)=>{
         return res.redirect("/")
     }
     res.render('user_sign_in',{
-        title:"Sign In"
+        title:"Sign In",
+        key:process.env.siteKey
     })
 
 }
