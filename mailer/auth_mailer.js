@@ -10,7 +10,7 @@ exports.forgetPasswordMail = (user,password) =>{
     nodeMailer.transporter.sendMail({
         from:"prajwal.mahajan@gmail.com",
         to:user.email,
-        subject:"New Comment Published",
+        subject:"Reset Password",
         html: html
     },(err,info)=>{
         if(err) console.log("Error in Sending Mails",err)

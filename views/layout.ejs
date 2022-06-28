@@ -9,8 +9,6 @@
     <!-- Noty  files -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js" integrity="sha512-lOrm9FgT1LKOJRUXF3tp6QaMorJftUjowOWiDcG5GFZ/q7ukof19V0HKx/GWzXCdt9zYju3/KhBNdCLzK8b90Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.css" integrity="sha512-0p3K0H3S6Q4bEWZ/WmC94Tgit2ular2/n0ESdfEX8l172YyQj8re1Wu9s/HT9T/T2osUw5Gx/6pAZNk3UKbESw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <link rel="stylesheet" href="/lib/noty.css">
     <!-- Bootstrap Css file -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <!-- footer Css file -->
@@ -48,8 +46,10 @@
             layout:'topRight',
             timeout:2000,
         }).on('onShow', function() {
-                let audio = new Audio('/audio/noty.mp3');
-                audio.play();
+                let audio1 = new Audio('/audio/noty.mp3');
+                let audio2 = new Audio('/audio/s.mp3');
+                audio2.play();
+                audio1.play();
     }).show()
     <% } %>
     <% if (flash.error && flash.error.length >0) {%>
@@ -60,8 +60,10 @@
         layout:'topRight',
         timeout:2000
     }).on('onShow', function() {
-        let audio = new Audio('/audio/noty.mp3');
-        audio.play();
+        let audio1 = new Audio('/audio/noty.mp3');
+        let audio2 = new Audio('/audio/s.mp3');
+        audio2.play();
+        audio1.play();
     }).show()
     <% } %>
     <% if (flash.info && flash.info.length >0) {%>
@@ -72,10 +74,31 @@
         layout:'topRight',
         timeout:2000
     }).on('onShow', function() {
-        let audio = new Audio('/audio/noty.mp3');
-        audio.play();
+        let audio1 = new Audio('/audio/noty.mp3');
+        let audio2 = new Audio('/audio/s.mp3');
+        audio2.play();
+        audio1.play();
     }).show()
     <% } %>
+    function validateRecaptcha() {
+        let response = grecaptcha.getResponse();
+        if (response.length === 0) {
+            new Noty({
+                theme: 'relax',
+                text: 'ReCaptcha Not validated',
+                type: 'error',
+                layout: 'topRight',
+                timeout: 2000
+            }).on('onShow', function () {
+                let audio = new Audio('/audio/noty.mp3');
+                audio.play();
+            }).show()
+
+            return false;
+        } else {
+            return true;
+        }
+    }
 
 </script>
 </body>

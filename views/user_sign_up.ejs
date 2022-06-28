@@ -1,7 +1,7 @@
 <h1>Sign UP</h1>
 
 <div class="card m-3 p-3">
-    <form action="/users/create" method="post">
+    <form action="/users/create" id="sign-up" method="post" onsubmit="return validateRecaptcha();">
         <div class="mb-3">
             <label for="name" class="form-label">YourName</label>
             <input type="text" class="form-control" name="name" id="name" placeholder="Name" required>
