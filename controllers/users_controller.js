@@ -1,10 +1,13 @@
 //Modules
 const crypto = require('crypto')
 const bcrypt = require('bcrypt')
-const auth_mailer = require('../mailer/auth_mailer')
+
+// Parallel Jobs Configuration
+const queue = require('../configs/kue')
+const forgetPasswordWorker = require('../workers/forget_password_worker')
+const verifyEmailWorker = require('../workers/verify_email_worker')
+
 //Models
-
-
 const User = require('../models/user')
 const Request  =require('../models/email_verification_request')
 // Actions
@@ -68,12 +71,14 @@ exports.createUser = async (req,res,next) =>{
         try {
             let user = await User.findOne({email: formData.email})
             if (!user) {
-                const simplePassword = formData.password
-                let new_password = await bcrypt.hash(simplePassword, 10)
-                formData.password = new_password
+                formData.password = await bcrypt.hash(formData.password, 10)
                 user = await User.create(formData)
                 let request = await Request.create({user:user.id})
-                auth_mailer.emailVerificationMail(user,request.id)
+                // auth_mailer.emailVerificationMail(user,request.id)
+                let job = queue.create('verify_emails',{user:user,id:request.id}).save((err=>{
+                    if(err) console.log("Error while enqueuing the job",err)
+                    else console.log("Job enqueued ",job.id)
+                }))
                 req.flash('success','User Signed Up')
                 return res.redirect("/users/sign-in")
             } else {
@@ -119,7 +124,11 @@ exports.upDateUser =(req,res,next)=>{
                 user.isEmailVerified = false
                 user.email= req.body.email
                 let request = await Request.create({user:user})
-                auth_mailer.emailVerificationMail(user,request.id)
+                let job = queue.create('verify_emails',{user:user,id:request.id}).save((err=>{
+                    if(err) console.log("Error while enqueuing the job",err)
+                    else console.log("Job enqueued ",job.id)
+                }))
+                // auth_mailer.emailVerificationMail(user,request.id)
                 req.flash('info','Email has been Changed it is needed To be Verified')
             }
             user.save()
@@ -149,7 +158,11 @@ exports.generatePassword = async (req,res,next) =>{
     user.password = await bcrypt.hash(newPassword, 10);
     user.isPasswordUserCreated = false
     user.save()
-    auth_mailer.forgetPasswordMail(user,newPassword)
+    // auth_mailer.forgetPasswordMail(user,newPassword)
+    let job = queue.create('reset_password_emails',{user:user,password:newPassword}).save((err=>{
+        if(err) console.log("Error while enqueuing the job",err)
+        else console.log("Job enqueued ",job.id)
+    }))
     req.flash('success','A email is sent with your new password to your email id')
     return res.redirect("/users/sign-in")
 }
@@ -184,7 +197,11 @@ exports.resendEmailVerificationMail = async (req,res,next) =>{
             if (!request) {
                 request = await Request.create({user: req.user.id})
             }
-            auth_mailer.emailVerificationMail(req.user,request.id)
+            // auth_mailer.emailVerificationMail(req.user,request.id)
+            let job = queue.create('verify_emails',{user:req.user,id:request.id}).save((err=>{
+                if(err) console.log("Error while enqueuing the job",err)
+                else console.log("Job enqueued ",job.id)
+            }))
             req.logout((err)=>{
                 if(err) {
                     return next(err)
