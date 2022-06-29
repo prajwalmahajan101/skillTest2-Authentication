@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const DBUrl =process.env.DBUrl || "mongodb://localhost:27017/auth_dev"
+const DBUrl  = process.env.DBUrl
 
 mongoose.connect(DBUrl)
 

@@ -20,3 +20,11 @@ exports.home = async (req,res,next)=>{
         return res.redirect("back")
     }
 }
+
+
+exports.pageNotFound = (req,res,next) =>{
+    req.render('page_not_found',{
+        title:'Page Not Found'
+    })
+
+}

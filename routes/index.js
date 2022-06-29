@@ -16,6 +16,7 @@ const router = express.Router()
 // get
 router.get('/',passportLocal.checkAuthentication,homeController.home)
 router.use('/users',require('./users'))
+router.use('/',homeController.pageNotFound)
 
 // Export  Router
 module.exports = router

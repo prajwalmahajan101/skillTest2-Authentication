@@ -62,15 +62,15 @@ app.set("views","./views")
 //Passport session
 app.use(expressSession({
     name:'Authentication',
-    secret: process.env.Secret || "BlahSomethingWhichIDontCare",
+    secret: process.env.Secret,
     saveUninitialized:false,
     resave:false,
     cookie:{
         maxAge: (30*60*1000)   // 30 minutes
     },
     store:new MongoStore({
-        mongoUrl: process.env.DBUrl|| "mongodb://localhost:27017/auth_dev",
-        autoRemove: 'disabled'
+        mongoUrl: process.env.DBUrl,
+        autoRemove: 'interval'
     })
 }))
 //Passport Authentications
